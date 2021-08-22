@@ -25,6 +25,9 @@ type Server struct {
 
 	// NewRequestLogger will be called at the beginning of every request to get a logger to be used for that request.
 	NewRequestLogger func(c *Context) (rlb RequestLoggerBase)
+
+	// ClientHost will be called to determine the hostname or IP address of the client making the request.
+	ClientHost func(c *Context) (host string)
 }
 
 func NewServer() (server *Server) {

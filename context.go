@@ -183,6 +183,11 @@ type ContextRequest struct {
 	params httprouter.Params
 }
 
+// ClientHost returns the hostname or IP address of the client making the request.
+func (cr ContextRequest) ClientHost() (host string) {
+	return cr.c.server.ClientHost(cr.c)
+}
+
 // Method returns the HTTP method of the request.
 func (cr ContextRequest) Method() (m string) {
 	return cr.req.Method
