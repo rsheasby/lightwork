@@ -34,8 +34,9 @@ func (hg *HandlerGroup) handlerShim(h Handler) httprouter.Handle {
 		if err != nil {
 			c.Log.Errorf("Error returned from request handler: %v", err)
 		}
-		if c.Response.rw.statusCode == 0 {
+		if c.Response.GetStatusCode() == 0 {
 			c.Log.WTF("Handler didn't write a response")
+			c.Response.Status(500)
 		}
 		c.Log.b.WriteLogs()
 	}

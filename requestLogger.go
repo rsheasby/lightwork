@@ -1,6 +1,9 @@
 package lightwork
 
-import "fmt"
+import (
+	"fmt"
+	"runtime"
+)
 
 // RequestLoggerBase provides the basic interface required to log at 4 simple levels.
 type RequestLoggerBase interface {
@@ -53,12 +56,17 @@ func (rl *RequestLogger) Errorf(format string, values ...interface{}) {
 	rl.Error(fmt.Sprintf(format, values...))
 }
 
-// WTF should be used to log problems that should absolutely never happen; in development this should panic, in production it should simply be logged.
+// WTF should be used to log problems that should absolutely never happen.
+// This also records a stack trace as a second WTF event.
+// This should be indicative of a programming bug, as opposed to an expected runtime error.
 func (rl *RequestLogger) WTF(msg string) {
 	rl.b.WTF(msg)
+	stBuf := make([]byte, 100000)
+	n := runtime.Stack(stBuf, false)
+	rl.b.WTF("Stack Trace:\n" + string(stBuf[:n]))
 }
 
-// WTFf formats your message before logging it as a Panic, using the provided FormatLog function.
+// WTFf formats your message before logging it as WTF, using the provided FormatLog function.
 func (rl *RequestLogger) WTFf(format string, values ...interface{}) {
 	rl.WTF(fmt.Sprintf(format, values...))
 }
