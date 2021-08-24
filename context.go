@@ -16,7 +16,7 @@ import (
 type loggingResponseWriter struct {
 	rw            http.ResponseWriter
 	statusCode    int
-	contentLength int
+	contentLength int64
 }
 
 func (lrw *loggingResponseWriter) Header() (h http.Header) {
@@ -25,7 +25,7 @@ func (lrw *loggingResponseWriter) Header() (h http.Header) {
 
 func (lrw *loggingResponseWriter) Write(b []byte) (n int, err error) {
 	n, err = lrw.rw.Write(b)
-	lrw.contentLength += n
+	lrw.contentLength += int64(n)
 	return
 }
 
@@ -69,6 +69,11 @@ func (c *Context) EscapeHatch() (rw http.ResponseWriter, req *http.Request) {
 type ContextResponse struct {
 	rw *loggingResponseWriter
 	c  *Context
+}
+
+// Size returns the number of bytes that have been written to the response body.
+func (cr ContextResponse) Size() int64 {
+	return cr.rw.contentLength
 }
 
 // Header returns the header object for the response.
