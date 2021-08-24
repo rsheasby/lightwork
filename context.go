@@ -116,6 +116,7 @@ func (cr ContextResponse) String(statusCode int, body string) (err error) {
 // Struct returns the provided status code, and a serialised struct
 // The struct will be serialised using the server's configured StructEncoder.
 func (cr ContextResponse) Struct(statusCode int, s interface{}) (err error) {
+	cr.c.server.EncodeStructPreHook(cr.c)
 	cr.rw.WriteHeader(statusCode)
 	return cr.c.server.EncodeStruct(cr.c, s, cr.rw)
 }

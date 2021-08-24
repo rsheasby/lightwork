@@ -12,6 +12,9 @@ import (
 type Server struct {
 	router *httprouter.Router
 
+	// EncodeStructPreHook will be called before writing the header when using the struct encoder.
+	// This allows you to modify the header before it gets written, such as setting the Content-Type.
+	EncodeStructPreHook func(c *Context)
 	// EncodeStruct will be used to serialise objects for HTTP responses.
 	// Typically, this would be a JSON or XML encoder.
 	EncodeStruct func(c *Context, input interface{}, output io.Writer) (err error)
