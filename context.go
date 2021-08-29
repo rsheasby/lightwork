@@ -3,6 +3,7 @@ package lightwork
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -238,8 +239,14 @@ func (cr ContextRequest) BodyString() (body string) {
 }
 
 // BodyStruct reads and deserialises the body of the request into the provided struct.
+// If the deserialisation is successful, it also runs the provided validation function, and returns the resulting error, if present.
 // The result parameter must be a pointer to a struct.
 func (cr ContextRequest) BodyStruct(result interface{}) (err error) {
 	bodyStream := cr.BodyStream()
-	return cr.c.server.DecodeStruct(cr.c, bodyStream, result)
+	err = cr.c.server.DecodeStruct(cr.c, bodyStream, result)
+	if err != nil {
+		return
+	}
+
+	return cr.c.server.ValidateStruct(cr.c, result)
 }
