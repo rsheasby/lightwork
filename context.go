@@ -3,7 +3,6 @@ package lightwork
 import (
 	"bytes"
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
